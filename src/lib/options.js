@@ -1,6 +1,6 @@
-const HttpProxyAgent = require("http-proxy-agent");
-const HttpsProxyAgent = require("https-proxy-agent");
-const { SocksProxyAgent } = require("socks-proxy-agent");
+import { HttpProxyAgent } from "http-proxy-agent";
+import { HttpsProxyAgent } from "https-proxy-agent";
+import { SocksProxyAgent } from "socks-proxy-agent";
 
 // Set some extra headers because Puppeteer doesn't capture all request headers
 // Related: https://github.com/puppeteer/puppeteer/issues/5364
@@ -36,4 +36,4 @@ const setAgent = (proxy) => {
     };
 };
 
-module.exports = {setHeaders, setAgent};
+export { setHeaders, setAgent };

@@ -28,4 +28,4 @@ const type = (value) => {
     return (map[type] === undefined) ? "object" : map[type];
 }
 
-module.exports = type;
+export default type;

@@ -1,7 +1,7 @@
-const got = require('got');
-const CookieHandler = require('../lib/cookies');
-const { setHeaders, setAgent } = require('../lib/options');
-const type = require('../util/types');
+import got from 'got';
+import CookieHandler from '../lib/cookies.js';
+import { setHeaders, setAgent } from '../lib/options.js';
+import type from '../util/types.js';
 
 const CONTINUE_INTERCEPT_RESOLUTION_PRIORITY = 0;
 const RESPOND_INTERCEPT_RESOLUTION_PRIORITY = 0;
@@ -116,4 +116,4 @@ const useProxy = async (target, data) => {
 	useProxyPer[target.constructor.name.toLowerCase()](target, data);
 };
 
-module.exports = useProxy;
+export default useProxy;

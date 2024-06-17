@@ -1,15 +1,14 @@
-![npm](https://img.shields.io/npm/v/@stableproxy/puppeteer-page-proxy?style=flat-square)
+![npm](https://img.shields.io/npm/v/@lbovolini/puppeteer-page-proxy?style=flat-square)
 ![node-current](https://img.shields.io/node/v/puppeteer?style=flat-square)
 ![npm](https://img.shields.io/npm/dt/puppeteer-page-proxy?style=flat-square)
 
-# puppeteer-page-proxy [<img src="https://i.imgur.com/S6GVa41.png" align="right" width="50" height="50" style="float:left; margin-right: 20px">](https://stableproxy.com) <img src="https://i.ibb.co/kQrN9QJ/puppeteer-page-proxy-logo.png" align="right" width="150" height="150">
+# puppeteer-page-proxy <img src="https://i.ibb.co/kQrN9QJ/puppeteer-page-proxy-logo.png" align="right" width="150" height="150">
 Additional Node.js module to use with **[puppeteer](https://www.npmjs.com/package/puppeteer)** for setting proxies per page basis.
 
 Forwards intercepted requests from the browser to Node.js where it redoes the requests through a proxy and then returns the response to the browser.
 
 ## Tested on
-* Puppeteer `v21.7.0`
-* [StableProxy Proxies](https://stableproxy.com)
+* Puppeteer `v22.11.1`
 
 ## Features
 
@@ -20,7 +19,7 @@ Forwards intercepted requests from the browser to Node.js where it redoes the re
 
 ## Installation
 ```
-npm i @stableproxy/puppeteer-page-proxy
+npm i @lbovolini/puppeteer-page-proxy
 ```
 ## API
 #### useProxy(pageOrReq, proxy)
@@ -48,7 +47,7 @@ See [ContinueRequestOverrides](https://pptr.dev/api/puppeteer.continuerequestove
 ## Usage
 #### Importing:
 ```js
-const useProxy = require('puppeteer-page-proxy');
+import useProxy from "@lbovolini/puppeteer-page-proxy";
 ```
 
 #### Proxy per page:

@@ -1,5 +1,5 @@
-const {CookieJar} = require("tough-cookie");
-const CDP = require("./cdp");
+import { CookieJar } from "tough-cookie";
+import CDP from "./cdp.js";
 
 // Parse single raw cookie string to a cookie object for the browser
 const parseCookie = (rawCookie, domain) => {
@@ -88,7 +88,7 @@ class CookieHandler extends CDP {
         const toughCookies = this.formatCookies(browserCookies);
         // Add cookies to cookieJar
         const cookieJar = CookieJar.deserializeSync({
-                version: 'tough-cookie@4.1.2',
+                version: 'tough-cookie@4.1.4',
                 storeType: 'MemoryCookieStore',
                 rejectPublicSuffixes: true,
                 cookies: toughCookies
@@ -114,4 +114,4 @@ class CookieHandler extends CDP {
     }
 }
 
-module.exports = CookieHandler;
+export default CookieHandler;

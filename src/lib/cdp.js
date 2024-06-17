@@ -15,4 +15,4 @@ class CDP {
     }
 }
 
-module.exports = CDP;
+export default CDP;
