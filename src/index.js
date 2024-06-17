@@ -1,2 +1,6 @@
-module.exports = require("./core/proxy");
-module.exports.lookup = require("./core/lookup");
+import useProxy from "./core/proxy.js";
+import lookup from "./core/lookup.js";
+
+useProxy.lookup = lookup;
+
+export default useProxy;

@@ -58,4 +58,4 @@ const lookup = async (page, lookupServiceUrl = defaults.url, isJSON = defaults.j
     } catch(error) {console.log(error)}
 };
 
-module.exports = lookup;
+export default lookup;

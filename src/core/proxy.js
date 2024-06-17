@@ -1,14 +1,19 @@
-const got = require('got');
-const CookieHandler = require('../lib/cookies');
-const { setHeaders, setAgent } = require('../lib/options');
-const type = require('../util/types');
+import got from 'got';
+import CookieHandler from '../lib/cookies.js';
+import { setHeaders, setAgent } from '../lib/options.js';
+import type from '../util/types.js';
+
+const CONTINUE_INTERCEPT_RESOLUTION_PRIORITY = 0;
+const RESPOND_INTERCEPT_RESOLUTION_PRIORITY = 0;
+const ABORT_INTERCEPT_RESOLUTION_PRIORITY = 0;
 
 // Responsible for applying proxy
 const requestHandler = async (request, proxy, overrides = {}) => {
+	if (request.isInterceptResolutionHandled()) return;
 	// Reject non http(s) URI schemes
 	if (!request.url().startsWith('http') && !request.url().startsWith('https'))
 	{
-		request.continue();
+		request.continue({}, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
 		return;
 	}
 	const cookieHandler = new CookieHandler(request);
@@ -36,15 +41,17 @@ const requestHandler = async (request, proxy, overrides = {}) => {
 			await cookieHandler.setCookies(setCookieHeader);
 			response.headers['set-cookie'] = undefined;
 		}
-		await request.respond({
+		if (request.isInterceptResolutionHandled()) return;
+		request.respond({
 			status: response.statusCode,
 			headers: response.headers,
 			body: response.body
-		});
+		}, RESPOND_INTERCEPT_RESOLUTION_PRIORITY);
 	}
 	catch (error)
 	{
-		await request.abort();
+		if (request.isInterceptResolutionHandled()) return;
+		request.abort('failed', ABORT_INTERCEPT_RESOLUTION_PRIORITY);
 	}
 };
 
@@ -55,7 +62,7 @@ const removeRequestListener = (page, listenerName) => {
 
 const useProxyPer = {
 	// Call this if request object passed
-	httprequest: async (request, data) => {
+	cdphttprequest: async (request, data) => {
 		let proxy, overrides;
 		// Separate proxy and overrides
 		if (type(data) === 'object')
@@ -78,7 +85,8 @@ const useProxyPer = {
 		}
 		else
 		{
-			request.continue(overrides);
+			if (request.isInterceptResolutionHandled()) return;
+			request.continue(overrides, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
 		}
 	},
 
@@ -108,4 +116,4 @@ const useProxy = async (target, data) => {
 	useProxyPer[target.constructor.name.toLowerCase()](target, data);
 };
 
-module.exports = useProxy;
+export default useProxy;

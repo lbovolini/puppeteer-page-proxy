@@ -1,4 +1,12 @@
 # Change log
+### [3.0.2] - 2024-06-17
+#### Changes
+- Added support for Puppeteer request interception in cooperative intercept mode
+- Modified to ES6 Modules
+- Updated dependencies
+### [2.3.2] - 2024-02-12
+- Fixed by @stableproxy
+#### Changes
 ### [1.3.0] - 2022-11-03
 #### Changes
 - Update readme

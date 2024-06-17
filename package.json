@@ -1,9 +1,9 @@
 {
-  "name": "@stableproxy/puppeteer-page-proxy",
-  "description": "Additional fixed Node.js module to use with 'puppeteer' for setting proxies per page basis.",
-  "version": "2.3.1",
-  "author": "Cuadrix <cuadrix12000@gmail.com> (https://github.com/Cuadrix)",
-  "homepage": "https://github.com/stableproxy/puppeteer-page-proxy",
+  "name": "@lbovolini/puppeteer-page-proxy",
+  "description": "Additional Node.js module to use with 'puppeteer' for setting proxies per page basis.",
+  "version": "3.0.2",
+  "author": "Lucas Bovolini <lbovolini94@gmail.com> (https://github.com/lbovolini)",
+  "homepage": "https://github.com/lbovolini/puppeteer-page-proxy",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/stableproxy/puppeteer-page-proxy.git"
+    "url": "https://github.com/lbovolini/puppeteer-page-proxy.git"
   },
   "keywords": [
     "puppeteer",
@@ -24,10 +24,11 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "got": "^11.8.5",
-    "http-proxy-agent": "^5.0.0",
-    "https-proxy-agent": "^5.0.1",
-    "socks-proxy-agent": "^7.0.0",
-    "tough-cookie": "^4.1.2"
-  }
+    "got": "^14.4.1",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.4",
+    "socks-proxy-agent": "^8.0.3",
+    "tough-cookie": "^4.1.4"
+  },
+  "type": "module"
 }
