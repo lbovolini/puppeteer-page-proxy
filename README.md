@@ -80,6 +80,30 @@ page.on('request', async request => {
 });
 ```
 
+Works with Puppeteer's new request interception: Cooperative Intercept Mode
+
+```js
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
+import AnonymizeUaPlugin from "puppeteer-extra-plugin-anonymize-ua";
+import { DEFAULT_INTERCEPT_RESOLUTION_PRIORITY } from "puppeteer-core";
+
+puppeteer.use(StealthPlugin())
+    .use(AdblockerPlugin({
+        interceptResolutionPriority: DEFAULT_INTERCEPT_RESOLUTION_PRIORITY,
+        blockTrackers: true,
+        blockTrackersAndAnnoyances: true
+    }))
+    .use(AnonymizeUaPlugin());
+
+page.on('request', request => {
+    if (request.isInterceptResolutionHandled()) { return }
+
+    return useProxy(request, proxy) 
+});
+```
+
 Overriding requests:
 ```js
 await page.setRequestInterception(true);
