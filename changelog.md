@@ -1,4 +1,7 @@
 # Change log
+### [3.0.3] - 2024-06-22
+#### Changes
+- Fixed http and https agents
 ### [3.0.2] - 2024-06-17
 #### Changes
 - Added support for Puppeteer request interception in cooperative intercept mode

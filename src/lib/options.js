@@ -1,6 +1,5 @@
-import { HttpProxyAgent } from "http-proxy-agent";
-import { HttpsProxyAgent } from "https-proxy-agent";
 import { SocksProxyAgent } from "socks-proxy-agent";
+import { HttpProxyAgent, HttpsProxyAgent } from "hpagent";
 
 // Set some extra headers because Puppeteer doesn't capture all request headers
 // Related: https://github.com/puppeteer/puppeteer/issues/5364
