@@ -30,8 +30,8 @@ const setAgent = (proxy) => {
         };
     }
     return {
-        http: new HttpProxyAgent(proxy),
-        https: new HttpsProxyAgent(proxy)
+        http: new HttpProxyAgent({ proxy }),
+        https: new HttpsProxyAgent({ proxy })
     };
 };
 
