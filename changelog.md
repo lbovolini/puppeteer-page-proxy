@@ -1,4 +1,7 @@
 # Change log
+### [3.0.4] - 2024-06-24
+#### Changes
+- Fixed agent options
 ### [3.0.3] - 2024-06-22
 #### Changes
 - Fixed http and https agents
