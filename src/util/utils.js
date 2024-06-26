@@ -28,4 +28,34 @@ const type = (value) => {
     return (map[type] === undefined) ? "object" : map[type];
 }
 
-export default type;
+const circularReplacer = () => {
+	
+    const ancestors = [];
+
+	return function (key, value) {
+
+        if (typeof value !== "object" || value === null) {
+            return value;
+        }
+        // `this` is the object that value is contained in,
+        // i.e., its direct parent.
+        while (ancestors.length > 0 && ancestors.at(-1) !== this) {
+            ancestors.pop();
+        }
+
+        if (ancestors.includes(value)) {
+            return "[Circular]";
+        }
+
+        ancestors.push(value);
+
+        return Array.isArray(value) ? "[...]" : value
+    };
+  }
+
+const prettyPrint = (e) => JSON.stringify(e, circularReplacer(), 2);
+
+export { 
+    type,
+    prettyPrint
+}
