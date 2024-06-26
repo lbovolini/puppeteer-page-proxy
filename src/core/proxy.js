@@ -1,7 +1,9 @@
 import got from 'got';
-import CookieHandler from '../lib/cookies.js';
 import { setHeaders, setAgent } from '../lib/options.js';
-import type from '../util/types.js';
+import { type, prettyPrint } from '../util/utils.js'
+
+import Debug from 'debug';
+const debug = Debug('puppeteer-page-proxy');
 
 const CONTINUE_INTERCEPT_RESOLUTION_PRIORITY = 0;
 const RESPOND_INTERCEPT_RESOLUTION_PRIORITY = 0;
@@ -9,17 +11,21 @@ const ABORT_INTERCEPT_RESOLUTION_PRIORITY = 0;
 
 // Responsible for applying proxy
 const requestHandler = async (request, proxy, overrides = {}) => {
-	if (request.isInterceptResolutionHandled()) return;
+
+	const url = overrides.url || request.url()
 	// Reject non http(s) URI schemes
-	if (!request.url().startsWith('http') && !request.url().startsWith('https'))
-	{
-		request.continue({}, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
-		return;
+	if (!request.url().startsWith('http') && !request.url().startsWith('https')) {
+		if (request.isInterceptResolutionHandled()) {
+			const debugMessage = `URL is not a http or https URI scheme, request for url=${url} already resolved by another handler, could not vote to continue with priority=${CONTINUE_INTERCEPT_RESOLUTION_PRIORITY}`
+			debug(debugMessage);
+			return;
+		}
+
+		return request.continue({}, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
 	}
-	const cookieHandler = new CookieHandler(request);
+
 	// Request options for GOT accounting for overrides
 	const options = {
-		cookieJar: await cookieHandler.getCookies(),
 		method: overrides.method || request.method(),
 		body: overrides.postData || request.postData(),
 		headers: overrides.headers || setHeaders(request),
@@ -30,28 +36,37 @@ const requestHandler = async (request, proxy, overrides = {}) => {
 		ignoreInvalidCookies: true,
 		followRedirect: false
 	};
-	try
-	{
-		const response = await got(overrides.url || request.url(), options);
-		// Set cookies manually because "set-cookie" doesn't set all cookies (?)
-		// Perhaps related to https://github.com/puppeteer/puppeteer/issues/5364
-		const setCookieHeader = response.headers['set-cookie'];
-		if (setCookieHeader)
-		{
-			await cookieHandler.setCookies(setCookieHeader);
-			response.headers['set-cookie'] = undefined;
+
+	try {
+		const response = await got(url, options);
+
+		if (request.isInterceptResolutionHandled()) {
+			const debugMessage =`Request for url=${url} already resolved by another handler, could not use proxy=${proxy} for url=${url}`
+			debug(debugMessage);
+			return;
 		}
-		if (request.isInterceptResolutionHandled()) return;
-		request.respond({
+
+		const debugMessage = `Using proxy=${proxy} for url=${url} with options=${prettyPrint(options)}, status=${response.statusCode}`
+		debug(debugMessage);
+
+		return await request.respond({
 			status: response.statusCode,
 			headers: response.headers,
 			body: response.body
 		}, RESPOND_INTERCEPT_RESOLUTION_PRIORITY);
 	}
-	catch (error)
-	{
-		if (request.isInterceptResolutionHandled()) return;
-		request.abort('failed', ABORT_INTERCEPT_RESOLUTION_PRIORITY);
+	catch (error) {
+		let debugMessage = `Something went wrong, using proxy=${proxy} for url=${url} with options=${prettyPrint(options)}`
+		debug(debugMessage)
+		debug(error)
+
+		if (request.isInterceptResolutionHandled()) {
+			debugMessage = `Request for url=${url} already resolved by another handler, could not vote to abort with priority=${ABORT_INTERCEPT_RESOLUTION_PRIORITY}`
+			debug(debugMessage);
+			return;
+		}
+		
+		return await request.abort('failed', ABORT_INTERCEPT_RESOLUTION_PRIORITY);
 	}
 };
 
@@ -65,29 +80,28 @@ const useProxyPer = {
 	cdphttprequest: async (request, data) => {
 		let proxy, overrides;
 		// Separate proxy and overrides
-		if (type(data) === 'object')
-		{
-			if (Object.keys(data).length !== 0)
-			{
+		if (type(data) === 'object') {
+			if (Object.keys(data).length !== 0) {
 				proxy = data.proxy;
 				delete data.proxy;
 				overrides = data;
 			}
 		}
-		else
-		{
+		else {
 			proxy = data;
 		}
 		// Skip request if proxy omitted
-		if (proxy)
-		{
-			await requestHandler(request, proxy, overrides);
+		if (proxy) {
+			return await requestHandler(request, proxy, overrides);
 		}
-		else
-		{
-			if (request.isInterceptResolutionHandled()) return;
-			request.continue(overrides, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
+
+		if (request.isInterceptResolutionHandled()) {
+			const debugMessage = `Request already resolved by another handler, could not vote to continue request with priority=${CONTINUE_INTERCEPT_RESOLUTION_PRIORITY} and without proxy`
+			debug(debugMessage);
+			return;
 		}
+
+		return request.continue(overrides, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
 	},
 
 	// Call this if page object passed
@@ -100,12 +114,10 @@ const useProxyPer = {
 				await requestHandler(request, proxy);
 			}
 		};
-		if (proxy)
-		{
+		if (proxy) {
 			page.on('request', f[listener]);
 		}
-		else
-		{
+		else {
 			await page.setRequestInterception(false);
 		}
 	}
@@ -113,7 +125,7 @@ const useProxyPer = {
 
 // Main function
 const useProxy = async (target, data) => {
-	useProxyPer[target.constructor.name.toLowerCase()](target, data);
+	return useProxyPer[target.constructor.name.toLowerCase()](target, data);
 };
 
 export default useProxy;

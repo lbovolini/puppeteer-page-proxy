@@ -1,4 +1,10 @@
 # Change log
+### [3.0.7] - 2024-06-26
+#### Changes
+- Fixed cooperative request intercept mode
+- Removed cookies jar option
+- Added debug messages
+# Change log
 ### [3.0.4] - 2024-06-24
 #### Changes
 - Fixed agent options
