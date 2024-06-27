@@ -71,12 +71,12 @@ The request object itself is passed as the first argument. The individual reques
 Using it together with other interception methods:
 ```js
 await page.setRequestInterception(true);
-page.on('request', async request => {
+page.on('request', request => {
     if (request.resourceType() === 'image') {
-        request.abort();
-    } else {
-        await useProxy(request, 'socks4://127.0.0.1:1080');
+        return request.abort('aborted', 0);
     }
+
+    return useProxy(request, 'socks4://127.0.0.1:1080');
 });
 ```
 
@@ -97,11 +97,7 @@ puppeteer.use(StealthPlugin())
     }))
     .use(AnonymizeUaPlugin());
 
-page.on('request', request => {
-    if (request.isInterceptResolutionHandled()) { return }
-
-    return useProxy(request, proxy) 
-});
+page.on('request', request => useProxy(request, proxy));
 ```
 
 Overriding requests:
@@ -176,7 +172,6 @@ The warning can be thought of as a false positive.
 
 ## Dependencies
 - [Got](https://github.com/sindresorhus/got)
-- [http-proxy-agent](https://github.com/TooTallNate/node-http-proxy-agent)
-- [https-proxy-agent](https://github.com/TooTallNate/node-https-proxy-agent)
+- [hpagent](https://github.com/delvedor/hpagent)
 - [socks-proxy-agent](https://github.com/TooTallNate/node-socks-proxy-agent)
-- [tough-cookie](https://github.com/salesforce/tough-cookie)
+- [debug](https://github.com/debug-js/debug)
