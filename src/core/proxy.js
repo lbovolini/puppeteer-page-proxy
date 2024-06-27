@@ -1,6 +1,6 @@
 import got from 'got';
 import { setHeaders, setAgent } from '../lib/options.js';
-import { type, prettyPrint } from '../util/utils.js'
+import { type } from '../util/utils.js'
 
 import Debug from 'debug';
 const debug = Debug('puppeteer-page-proxy');
@@ -16,8 +16,7 @@ const requestHandler = async (request, proxy, overrides = {}) => {
 	// Reject non http(s) URI schemes
 	if (!request.url().startsWith('http') && !request.url().startsWith('https')) {
 		if (request.isInterceptResolutionHandled()) {
-			const debugMessage = `URL is not a http or https URI scheme, request for url=${url} already resolved by another handler, could not vote to continue with priority=${CONTINUE_INTERCEPT_RESOLUTION_PRIORITY}`
-			debug(debugMessage);
+			debug("URL is not a http or https URI scheme, request already resolved by another handler, could not vote to continue", { url, priority: CONTINUE_INTERCEPT_RESOLUTION_PRIORITY });
 			return;
 		}
 
@@ -46,8 +45,7 @@ const requestHandler = async (request, proxy, overrides = {}) => {
 			return;
 		}
 
-		const debugMessage = `Using proxy=${proxy} for url=${url} with options=${prettyPrint(options)}, status=${response.statusCode}`
-		debug(debugMessage);
+		debug("Proxy response received", { proxy, url, options, statusCode: response.statusCode });
 
 		return await request.respond({
 			status: response.statusCode,
@@ -56,13 +54,10 @@ const requestHandler = async (request, proxy, overrides = {}) => {
 		}, RESPOND_INTERCEPT_RESOLUTION_PRIORITY);
 	}
 	catch (error) {
-		let debugMessage = `Something went wrong, using proxy=${proxy} for url=${url} with options=${prettyPrint(options)}`
-		debug(debugMessage)
-		debug(error)
+		debug("Something went wrong", { proxy, url, options, error })
 
 		if (request.isInterceptResolutionHandled()) {
-			debugMessage = `Request for url=${url} already resolved by another handler, could not vote to abort with priority=${ABORT_INTERCEPT_RESOLUTION_PRIORITY}`
-			debug(debugMessage);
+			debug("Request already resolved by another handler, could not vote to abort", { url, priority: ABORT_INTERCEPT_RESOLUTION_PRIORITY });
 			return;
 		}
 		
@@ -96,8 +91,7 @@ const useProxyPer = {
 		}
 
 		if (request.isInterceptResolutionHandled()) {
-			const debugMessage = `Request already resolved by another handler, could not vote to continue request with priority=${CONTINUE_INTERCEPT_RESOLUTION_PRIORITY} and without proxy`
-			debug(debugMessage);
+			debug("Request already resolved by another handler, could not vote to continue without proxy", { priority: CONTINUE_INTERCEPT_RESOLUTION_PRIORITY });
 			return;
 		}
 
