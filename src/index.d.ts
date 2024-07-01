@@ -27,5 +27,5 @@ declare namespace useProxy {
  * @param isJSON Whether to JSON.parse the received response. Defaults to `true`.
  * @param timeout Time in milliseconds after which the request times out. Defaults to `30000` ms.
  */
-	function lookup(page: object, lookupServiceUrl?: string, isJSON?: boolean, timeout?: number | string): Promise<any>;
+    function lookup(page: object, lookupServiceUrl?: string, isJSON?: boolean, timeout?: number | string): Promise<any>;
 }
