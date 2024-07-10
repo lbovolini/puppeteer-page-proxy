@@ -1,4 +1,8 @@
 # Change log
+### [3.0.8] - 2024-07-10
+- Exposed timeout, https and retry options
+#### Changes
+# Change log
 ### [3.0.7] - 2024-06-26
 #### Changes
 - Fixed cooperative request intercept mode

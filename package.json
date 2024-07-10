@@ -1,7 +1,7 @@
 {
   "name": "@lbovolini/puppeteer-page-proxy",
   "description": "Additional Node.js module to use with 'puppeteer' for setting proxies per page basis.",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "author": "Lucas Bovolini <lbovolini94@gmail.com> (https://github.com/lbovolini)",
   "homepage": "https://github.com/lbovolini/puppeteer-page-proxy",
   "main": "./src/index.js",

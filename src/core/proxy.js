@@ -1,4 +1,4 @@
-import got from 'got';
+import got, { Options } from 'got';
 import { setHeaders, setAgent } from '../lib/options.js';
 import { type } from '../util/utils.js'
 
@@ -23,6 +23,7 @@ const requestHandler = async (request, proxy, overrides = {}) => {
         return request.continue({}, CONTINUE_INTERCEPT_RESOLUTION_PRIORITY);
     }
 
+    const defaults = new Options();
     // Request options for GOT accounting for overrides
     const options = {
         method: overrides.method || request.method(),
@@ -33,7 +34,10 @@ const requestHandler = async (request, proxy, overrides = {}) => {
         maxRedirects: 15,
         throwHttpErrors: false,
         ignoreInvalidCookies: true,
-        followRedirect: false
+        followRedirect: false,
+        retry: overrides.retry || defaults.retry,
+		https: overrides.https || defaults.https,
+        timeout: overrides.timeout || defaults.timeout,
     };
 
     try {

@@ -111,7 +111,16 @@ page.on('request', async request => {
         postData: '404',
         headers: {
             accept: 'text/html'
-        }
+        },
+        https: { // see https://github.com/sindresorhus/got/blob/main/documentation/5-https.md
+            ciphers: tls.DEFAULT_CIPHERS
+        },
+        timeout: { // see https://github.com/sindresorhus/got/blob/main/documentation/6-timeout.md
+            request: 30000
+        },
+        retry: { // see https://github.com/sindresorhus/got/blob/main/documentation/7-retry.md
+            limit: 0
+        },
     });
 });
 ```
